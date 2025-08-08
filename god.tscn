@@ -10,12 +10,19 @@ script = ExtResource("1_norsa")
 offset_right = 1152.0
 offset_bottom = 648.0
 
-[node name="Send" type="Button" parent="."]
+[node name="Connect" type="Button" parent="."]
 offset_left = 39.0
 offset_top = 51.0
 offset_right = 183.0
 offset_bottom = 108.0
-text = "Send PingMsg"
+text = "Connect"
+
+[node name="Send" type="Button" parent="."]
+offset_left = 88.0
+offset_top = 180.0
+offset_right = 215.0
+offset_bottom = 239.0
+text = "Send Msg"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_left = 453.0
@@ -33,4 +40,5 @@ text = "Waiting"
 
 [node name="RmqClientNode" parent="." instance=ExtResource("2_norsa")]
 
+[connection signal="pressed" from="Connect" to="." method="_on_connect_pressed"]
 [connection signal="pressed" from="Send" to="." method="_on_send_pressed"]
