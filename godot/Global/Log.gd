@@ -2,40 +2,28 @@ extends Node
 
 enum eLogLevel {
 	ALL,
+	DEBUG,
 	ASYNC,
 	INFO,
 	WARN,
 	ERROR,
-	DEBUG
+}
+
+var ColorMap:Dictionary = {
+	eLogLevel.ALL : "none",
+	eLogLevel.DEBUG : "lightblue",
+	eLogLevel.ASYNC : "green",
+	eLogLevel.INFO : "orange",
+	eLogLevel.WARN : "yellow",
+	eLogLevel.ERROR : "red",
 }
 
 static var loggingAt:eLogLevel = eLogLevel.ASYNC
 
 #-----
-func log(logLevel:int, message:String, args:Array = [], opts:Dictionary = {}) -> void:
+func log(logLevel:eLogLevel, message:String, args:Array = [], opts:Dictionary = {}) -> void:
 	if (loggingAt <= logLevel):
-		match logLevel:
-			eLogLevel.ALL:
-				doPrint(Callable(print), "none", message, args, opts)
-				pass
-			eLogLevel.ASYNC:
-				doPrint(Callable(print_rich), "green", message, args, opts)
-				pass
-			eLogLevel.INFO:
-				doPrint(Callable(print_rich), "orange", message, args, opts)
-				pass
-			eLogLevel.WARN:
-				doPrint(Callable(print_rich), "yellow", message, args, opts)
-				pass
-			eLogLevel.ERROR:
-				doPrint(Callable(print_rich), "red", message, args, opts)
-				pass
-			eLogLevel.DEBUG:
-				doPrint(Callable(print_rich), "lightblue", message, args, opts)
-				pass
-			var _unknown:
-				pass
-		pass
+		_doPrint(Callable(print), ColorMap[logLevel], message, args, opts)
 	return
 #-----
 func all(message:String, args:Array = [], _newlines = false) -> void:
@@ -63,7 +51,7 @@ func error(message:String, args:Array = [], _newlines = false) -> void:
 	push_error(message, args)
 	return
 #-----
-func doPrint(printAction:Callable, coloring:String, message:String, args:Array, opts:Dictionary) -> void:
+func _doPrint(printAction:Callable, coloring:String, message:String, args:Array, opts:Dictionary) -> void:
 	var plainMessage = _assembleMessage(opts, message, args)
 	if coloring == "none":
 		printAction.call(plainMessage)
