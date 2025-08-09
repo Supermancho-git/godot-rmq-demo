@@ -1,6 +1,6 @@
 class_name RMQValidatedConfig
 
-const _requiredFields:Array[String] = ["vhost", "username", "cipher", "publishingToExchange", "publishingToQueueRk", "consumingFromQueue", "host", "port", "connectTimeoutSec", "pingJson", "pongJson"]
+const _requiredFields:Array[String] = ["vhost", "username", "cipher", "publishingToExchange", "publishingToQueueRk", "consumingFromQueue", "host", "port", "connectTimeoutSec"]
 const _className:String = "RMQConfig"
 
 var username:String
@@ -12,8 +12,8 @@ var publishingToQueueRk:String
 var host:String
 var port:int
 var connectTimeoutSec:int
-var pingJson:Dictionary
-var pongJson:Dictionary
+var confirmEnd2End:RMQEnd2EndSettings
+var useConfirmEnd2End:bool
 
 var valid:bool = false
 #-----
@@ -21,10 +21,20 @@ func _init(config:Dictionary) -> void:
 	Util.assertRequiredFields(config, _className, _requiredFields)
 	for field in config:
 		self[field] = config[field]
-	if connectTimeoutSec < 1 or port < 1:
+
+	useConfirmEnd2End = (config.has("confirmEnd2End") and confirmEnd2End != null)
+
+	if not validation(config):
+		Log.warn("failed validation")
 		return
+
 	valid = true
 	return
+#-----
+func validation(config:Dictionary) -> bool:
+	if connectTimeoutSec < 1 or port < 1:
+		return false
+	return true
 #-----
 func getConfigured() -> Dictionary:
 	return {
@@ -37,7 +47,7 @@ func getConfigured() -> Dictionary:
 		"host": host,
 		"port": port,
 		"connectTimeoutSec": connectTimeoutSec,
-		"pingJson": pingJson,
-		"pongJson": pongJson,
+		"confirmEnd2End": confirmEnd2End,
+		"useConfirmEnd2End": useConfirmEnd2End,
 	}
 #-----

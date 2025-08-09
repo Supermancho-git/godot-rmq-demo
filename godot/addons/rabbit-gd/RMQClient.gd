@@ -60,7 +60,7 @@ func open(
 	var handshake_err = await _connect_rabbitmq(username,password,virtual_host)
 	if handshake_err != OK:
 		return handshake_err
-	Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
+	#Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
 	return OK
 
 func open_tls(
@@ -106,7 +106,7 @@ func open_tls(
 	var handshake_err = await _connect_rabbitmq(username,password,virtual_host)
 	if handshake_err != OK:
 		return handshake_err
-	Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
+	#Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
 	return OK
 
 # internal function, announces protocol and performs rmq handshake
@@ -300,7 +300,7 @@ func close(reason:String = "") -> Error:
 			func(err): Log.error("[rabbitmq] error reading closeok frame: " + str(err))
 		)
 		await RMQConnectionClass.CloseOk.from_frame(connection_closeok_frame_parse_result.data)
-		_close_connection(reason)
+	_close_connection(reason)
 	return OK
 
 # internal function when the connection is closed from the remote end.

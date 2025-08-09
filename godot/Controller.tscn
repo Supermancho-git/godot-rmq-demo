@@ -47,6 +47,14 @@ text = "Waiting to Connect"
 
 [node name="RmqClientNode" parent="." instance=ExtResource("2_u2oln")]
 
+[node name="End2End" type="CheckBox" parent="."]
+offset_left = 157.0
+offset_top = 367.0
+offset_right = 181.0
+offset_bottom = 391.0
+button_pressed = true
+text = "Confirm End2End"
+
 [connection signal="pressed" from="Connect" to="." method="_on_connect_pressed"]
 [connection signal="pressed" from="Send" to="." method="_on_send_pressed"]
 [connection signal="pressed" from="Disconnect" to="." method="_on_disconnect_pressed"]

@@ -1,4 +1,4 @@
-# GDPromise v2.0.0
+# GDPromise v2.0.0 # modified
 extends RefCounted
 class_name Promise
 
@@ -91,7 +91,7 @@ static func from(input_signal: Signal) -> Promise:
 
 			if number_of_args == 0:
 				await input_signal
-				resolve_func.call(null)
+				resolve_func.call(input_signal.get_name())
 			else:
 				# this will return either a value or an array of values
 				var result = await input_signal
