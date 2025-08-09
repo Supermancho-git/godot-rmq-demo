@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 Log="*res://global/Log.gd"
-C="*res://global/Constants.gd"
 
 [rendering]
 

@@ -129,7 +129,6 @@ func _start_receiving():
 		_connection.poll()
 		if _connection.get_status() != 2: # 2 means CONNECTED in both StreamPeerTLS and StreamPeerTCP
 			Log.debug("[rabbitmq] client receiver disconnected, got status " + str(_connection.get_status()))
-			sClientDisconnected.emit(_reason)
 			_reason = ""
 			return
 		var available_bytes = _connection.get_available_bytes()
@@ -292,7 +291,7 @@ func close() -> Error:
 
 		var close_error := await _send(RMQConnectionClass.Close.new(200,"",0,0).to_frame().to_wire())
 		if close_error != OK:
-			Log.error("[rabbitmq] Closing error, closing rmq connection: " + str(close_error))
+			Log.warn("[rabbitmq] Closing error, closing rmq connection: " + str(close_error))
 			_close_connection()
 			return close_error
 		var connection_closeok_frame_parse_result := await RMQFrame.forward(
@@ -312,15 +311,17 @@ func _close_ok() -> Error:
 	for channel in _active_channels.values():
 		channel._set_closed()
 	if close_error != OK:
-		Log.error("[rabbitmq] Closing error, closing rmq connection:" + str(close_error))
+		Log.warn("[rabbitmq] Closing error, closing rmq connection:" + str(close_error))
 		_close_connection()
 		return close_error
 	_close_connection()
 	return OK
 
-func _close_connection():
+func _close_connection() -> void:
 	if _connection is StreamPeerTCP:
 		_connection.disconnect_from_host()
 	elif _connection is StreamPeerTLS:
 		_connection.disconnect_from_stream()
 	Log.debug("[rabbitmq] Closed gracefully")
+	sClientDisconnected.emit(_reason)
+	return

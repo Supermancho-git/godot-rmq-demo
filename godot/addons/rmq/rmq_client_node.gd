@@ -45,14 +45,14 @@ func doConnect(rmqConfig:RMQValidatedConfig) -> Error:
 
 	var startupErr:Error = await self.start()
 	if startupErr != OK:
-		Log.error("start() failed: %", [startupErr])
+		Log.warn("start() failed: %", [startupErr])
 		_on_client_disconnected("")
 		return startupErr
 	return OK
 #-----
 func doDisconnect() -> void:
 	if _client == null:
-		Log.error("no client to close")
+		Log.warn("no client to close")
 		return
 	_client.close()
 	return
@@ -67,7 +67,7 @@ func configure(rmqConfig:RMQValidatedConfig) -> Error:
 		return OK
 
 	if not rmqConfig.valid:
-		Log.error("invalid config")
+		Log.warn("invalid config")
 		return FAILED
 
 	for field in rmqConfig.getConfigured():
@@ -79,11 +79,11 @@ func configure(rmqConfig:RMQValidatedConfig) -> Error:
 #-----
 func start() -> Error:
 	if not _configured:
-		Log.error("Not configured")
+		Log.warn("Not configured")
 		return FAILED
 
 	if _client != null:
-		Log.error("waiting to connect...")
+		Log.warn("waiting to connect...")
 		return ERR_ALREADY_IN_USE
 
 	_client = RMQClient.new()
@@ -100,7 +100,7 @@ func start() -> Error:
 	)
 	Log.debug("checking connection err")
 	if client_open_error != OK:
-		Log.error("Error opening rmqClient: %", [client_open_error])
+		Log.warn("Error opening rmqClient: %", [client_open_error])
 		return FAILED
 
 	# most amqp interactions are conducted through channels, which multiplex a connection
@@ -112,11 +112,11 @@ func start() -> Error:
 	var consume:Array = await _channel.basic_consume(consumingFromQueue, _on_consume_message)
 	Log.debug("checking consume err")
 	if consume[0] != OK:
-		Log.error("Consume error from: %", [consumingFromQueue])
+		Log.warn("Consume error from: %", [consumingFromQueue])
 		return FAILED
 	Log.debug("checking if channel is open")
 	if _channel:
-		var result:bool = await _testConnection()
+		var result:bool = await _testConnection(_timeoutTimer.wait_time)
 		Log.debug("heartbeat test result: %", [result])
 		if not result:
 			return FAILED
@@ -126,7 +126,7 @@ func start() -> Error:
 #-----
 func publish(message:Dictionary) -> Error:
 	if _client == null:
-		Log.error("client is not connected")
+		Log.warn("client is not connected")
 		return FAILED
 
 	Log.debug("publishing: %", [message])
@@ -135,12 +135,12 @@ func publish(message:Dictionary) -> Error:
 #-----
 func _testConnection(timeout:int=5) -> bool:
 	Log.debug("publishing: %", [pingJson])
-	Log.debug("RMQ publishingToExchange: %", [publishingToExchange])
-	Log.debug("RMQ publishingToQueueRk: %", [publishingToQueueRk])
+	Log.debug("publishingToExchange: %", [publishingToExchange])
+	Log.debug("publishingToQueueRk: %", [publishingToQueueRk])
 	var publishing_error:Error = await _channel.basic_publish(publishingToExchange, publishingToQueueRk, JSON.stringify(pingJson).to_utf8_buffer())
 	Log.debug("checking publishing err")
 	if publishing_error != OK:
-		Log.error("Error publishing: %", [publishing_error])
+		Log.warn("Error publishing: %", [publishing_error])
 		return false
 	Log.debug("awaiting testConnection signal")
 	var result:Promise.PromiseResult = await RMQUtil.awaitSignal(sPong, timeout, get_tree()).wait()
@@ -153,7 +153,7 @@ func _testConnection(timeout:int=5) -> bool:
 # this serves as a kind of destructor, letting the broker know that we want to shut down gracefully
 func _notification(what) -> void:
 	if what == NOTIFICATION_PREDELETE and _client:
-		push_error("RMQClientNode Notification PREDELETE")
+		Log.warn("Notification PREDELETE")
 		_client.close()
 	return
 #-----
@@ -173,16 +173,17 @@ func _on_consume_message(channel:RMQChannel, method:RMQBasicClass.Deliver, _prop
 			Log.debug("Message: %", [json.mtype])
 			sMessage.emit(json)
 		else:
-			Log.error("Got invalid json as message: %", [body.get_string_from_utf8()])
+			Log.warn("Got invalid json as message: %", [body.get_string_from_utf8()])
 	else:
-		Log.error("Got invalid body as message: %", [body.get_string_from_utf8()])
+		Log.warn("Got invalid body as message: %", [body.get_string_from_utf8()])
 	Log.debug("basic_ack for hearing msg")
 	channel.basic_ack(method.delivery_tag)
 	return
 #-----
-func _on_client_disconnected(_reason:String) -> void:
+func _on_client_disconnected(reason:String) -> void:
 	_client.sClientDisconnected.disconnect(_on_client_disconnected)
 	_client.close()
 	_client = null
+	sDisconnected.emit(reason)
 	return
 #-----

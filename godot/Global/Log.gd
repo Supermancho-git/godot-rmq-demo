@@ -9,7 +9,7 @@ enum eLogLevel {
 	ERROR,
 }
 
-var ColorMap:Dictionary = {
+var colorizeMap:Dictionary = {
 	eLogLevel.ALL : "none",
 	eLogLevel.DEBUG : "lightblue",
 	eLogLevel.ASYNC : "green",
@@ -18,12 +18,15 @@ var ColorMap:Dictionary = {
 	eLogLevel.ERROR : "red",
 }
 
-static var loggingAt:eLogLevel = eLogLevel.ASYNC
+static var loggingAt:eLogLevel = eLogLevel.DEBUG
 
 #-----
 func log(logLevel:eLogLevel, message:String, args:Array = [], opts:Dictionary = {}) -> void:
 	if (loggingAt <= logLevel):
-		_doPrint(Callable(print), ColorMap[logLevel], message, args, opts)
+		var methodUse:Callable = Callable(print_rich)
+		if logLevel == eLogLevel.ALL:
+			methodUse = Callable(print)
+		_doPrint(methodUse, colorizeMap[logLevel], message, args, opts)
 	return
 #-----
 func all(message:String, args:Array = [], _newlines = false) -> void:

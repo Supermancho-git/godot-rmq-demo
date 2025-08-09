@@ -1,0 +1,22 @@
+networks:
+    my_network:
+        name: my_network
+
+services:
+    rabbitmq:
+        container_name: my_rabbit
+        image: 'rabbitmq:4.1-management'
+        networks:
+            - my_network
+        environment:
+            - 'RABBITMQ_DEFAULT_PASS=admin'
+            - 'RABBITMQ_DEFAULT_USER=admin'
+        ports:
+            - '5672:5672' # rabbitmq tcp default
+            - '15672:15672' # localhost:15672 admin console
+        volumes:
+            #- ./infra/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ # can cause phantom data issues if merged with a new definitions file
+            #- ./infra/rabbitmq/advanced.config:/etc/rabbitmq/advanced.config
+            - ./infra/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+            - ./infra/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+            - ./infra/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
