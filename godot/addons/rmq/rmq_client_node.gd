@@ -50,11 +50,11 @@ func doConnect(rmqConfig:RMQValidatedConfig) -> Error:
 		return startupErr
 	return OK
 #-----
-func doDisconnect() -> void:
+func doDisconnect(reason:String = "application disconnected") -> void:
 	if _client == null:
 		Log.warn("no client to close")
 		return
-	_client.close()
+	_client.close(reason)
 	return
 #-----
 func configure(rmqConfig:RMQValidatedConfig) -> Error:

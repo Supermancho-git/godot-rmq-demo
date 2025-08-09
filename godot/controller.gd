@@ -41,7 +41,7 @@ func _on_server_connection() -> void:
 	return
 #-----
 func _on_server_disconnected(reason:String) -> void:
-	Log.info("Server DISCONNECTED because %", [reason])
+	Log.info("Server DISCONNECTED (%)", [reason])
 	status.text = "Disconnected"
 	return
 #-----

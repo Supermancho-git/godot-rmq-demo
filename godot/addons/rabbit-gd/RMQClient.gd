@@ -176,7 +176,7 @@ func _start_parsing():
 			if close_frame != null:
 				Log.debug("[rabbitmq] closing with reply code %d and text \"%s\" because of class id %d and method id %d" % [close_frame.reply_code, close_frame.reply_text, close_frame.class_id, close_frame.method_id])
 				_reason = close_frame.reply_text
-				await _close_ok()
+				await _close_ok("remote disconnected")
 		elif received_frame.channel_number > 0:
 			var channel : RMQChannel = _active_channels.get(received_frame.channel_number, null)
 			if channel:
@@ -284,7 +284,7 @@ func _heartbeat() -> void:
 # close connection gracefully from our end.
 # internal function for sending a close confirmation to upstream.
 # disconnects the tcp peer and closes all active channels.
-func close() -> Error:
+func close(reason:String = "") -> Error:
 	if _connection:
 		for channel in _active_channels.values():
 			await channel.close()
@@ -292,7 +292,7 @@ func close() -> Error:
 		var close_error := await _send(RMQConnectionClass.Close.new(200,"",0,0).to_frame().to_wire())
 		if close_error != OK:
 			Log.warn("[rabbitmq] Closing error, closing rmq connection: " + str(close_error))
-			_close_connection()
+			_close_connection(reason)
 			return close_error
 		var connection_closeok_frame_parse_result := await RMQFrame.forward(
 			PackedByteArray(),
@@ -300,28 +300,28 @@ func close() -> Error:
 			func(err): Log.error("[rabbitmq] error reading closeok frame: " + str(err))
 		)
 		await RMQConnectionClass.CloseOk.from_frame(connection_closeok_frame_parse_result.data)
-		_close_connection()
+		_close_connection(reason)
 	return OK
 
 # internal function when the connection is closed from the remote end.
 # confirms connection closing.
 # disconnects the tcp peer and closes all active channels.
-func _close_ok() -> Error:
+func _close_ok(reason:String = "") -> Error:
 	var close_error = await _send(RMQConnectionClass.CloseOk.new().to_frame().to_wire())
 	for channel in _active_channels.values():
 		channel._set_closed()
 	if close_error != OK:
 		Log.warn("[rabbitmq] Closing error, closing rmq connection:" + str(close_error))
-		_close_connection()
+		_close_connection(reason)
 		return close_error
-	_close_connection()
+	_close_connection(reason)
 	return OK
 
-func _close_connection() -> void:
+func _close_connection(reason:String) -> void:
 	if _connection is StreamPeerTCP:
 		_connection.disconnect_from_host()
 	elif _connection is StreamPeerTLS:
 		_connection.disconnect_from_stream()
 	Log.debug("[rabbitmq] Closed gracefully")
-	sClientDisconnected.emit(_reason)
+	sClientDisconnected.emit(reason)
 	return
