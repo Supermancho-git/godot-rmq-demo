@@ -3,7 +3,9 @@ extends Node
 const MSG_HEARTBEAT_PING:Dictionary = {
 	"mtype": "ping"
 }
-const MSG_HEARTBEAT_PONG:String = "pong"
+const MSG_HEARTBEAT_PONG:Dictionary = {
+	"mtype": "pong"
+}
 
 const MSG_DISCONNECTED:String = "disconnected"
 

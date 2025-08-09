@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://up0bhh7nrove"]
 
-[ext_resource type="Script" uid="uid://ofhn0a5jkofa" path="res://addons/rmq/rmqClientNode.gd" id="1_hgdbi"]
+[ext_resource type="Script" uid="uid://ofhn0a5jkofa" path="res://addons/rmq/rmq_client_node.gd" id="1_hgdbi"]
 
 [node name="RmqClientNode" type="Node"]
 script = ExtResource("1_hgdbi")

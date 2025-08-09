@@ -17,6 +17,7 @@ var _reason:String
 # tick the client to have it collect inbound data from the tcp connection, and send outbound data.
 func tick():
 	_tick_signal.emit()
+	return
 
 # Connect to RabbitMQ using TCP and PLAIN authorization.
 # host is the rabbitmq server hostname, port its port.
@@ -48,18 +49,18 @@ func open(
 			Log.error("[rabbitmq] Failed to poll " + host + ":" + str(port) + " error: " + str(poll_err))
 			return poll_err
 	if timeout != null and timeout.is_stopped():
-		Log.async("[rabbitmq] Connection timed out: %", [_connection.get_status()])
+		Log.debug("[rabbitmq] Connection timed out: %", [_connection.get_status()])
 		return ERR_TIMEOUT
 	timeout.stop()
 	if _connection.get_status() != StreamPeerTCP.Status.STATUS_CONNECTED:
-		Log.async("[rabbitmq] Connection error status: %", [_connection.get_status()])
+		Log.debug("[rabbitmq] Connection error status: %", [_connection.get_status()])
 		return ERR_CONNECTION_ERROR
 	_start_receiving()
 	_start_parsing()
 	var handshake_err = await _connect_rabbitmq(username,password,virtual_host)
 	if handshake_err != OK:
 		return handshake_err
-	Log.async("[rabbitmq] Connected to " + host + ":" + str(port))
+	Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
 	return OK
 
 func open_tls(
@@ -105,7 +106,7 @@ func open_tls(
 	var handshake_err = await _connect_rabbitmq(username,password,virtual_host)
 	if handshake_err != OK:
 		return handshake_err
-	Log.async("[rabbitmq] Connected to " + host + ":" + str(port))
+	Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
 	return OK
 
 # internal function, announces protocol and performs rmq handshake
@@ -127,7 +128,7 @@ func _start_receiving():
 	while true:
 		_connection.poll()
 		if _connection.get_status() != 2: # 2 means CONNECTED in both StreamPeerTLS and StreamPeerTCP
-			Log.async("[rabbitmq] client receiver disconnected, got status " + str(_connection.get_status()))
+			Log.debug("[rabbitmq] client receiver disconnected, got status " + str(_connection.get_status()))
 			sClientDisconnected.emit(_reason)
 			_reason = ""
 			return
@@ -174,7 +175,7 @@ func _start_parsing():
 		elif received_frame.channel_number == 0:
 			var close_frame := await RMQConnectionClass.Close.from_frame(received_frame)
 			if close_frame != null:
-				Log.async("[rabbitmq] closing with reply code %d and text \"%s\" because of class id %d and method id %d" % [close_frame.reply_code, close_frame.reply_text, close_frame.class_id, close_frame.method_id])
+				Log.debug("[rabbitmq] closing with reply code %d and text \"%s\" because of class id %d and method id %d" % [close_frame.reply_code, close_frame.reply_text, close_frame.class_id, close_frame.method_id])
 				_reason = close_frame.reply_text
 				await _close_ok()
 		elif received_frame.channel_number > 0:
@@ -322,4 +323,4 @@ func _close_connection():
 		_connection.disconnect_from_host()
 	elif _connection is StreamPeerTLS:
 		_connection.disconnect_from_stream()
-	Log.async("[rabbitmq] Closed gracefully")
+	Log.debug("[rabbitmq] Closed gracefully")

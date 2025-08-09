@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://dvkdu8fqs6gwc"]
 
-[ext_resource type="Script" uid="uid://1fv7r8ki3ni2" path="res://godRmq.gd" id="1_norsa"]
-[ext_resource type="PackedScene" uid="uid://up0bhh7nrove" path="res://addons/rmq/RMQClientNode.tscn" id="2_norsa"]
+[ext_resource type="Script" uid="uid://1fv7r8ki3ni2" path="res://controller.gd" id="1_55pmi"]
+[ext_resource type="PackedScene" uid="uid://up0bhh7nrove" path="res://addons/rmq/RMQClientNode.tscn" id="2_u2oln"]
 
-[node name="God" type="Node"]
-script = ExtResource("1_norsa")
+[node name="Controller" type="Node"]
+script = ExtResource("1_55pmi")
 
 [node name="background" type="Panel" parent="."]
 offset_right = 1152.0
@@ -24,6 +24,13 @@ offset_right = 215.0
 offset_bottom = 239.0
 text = "Send Msg"
 
+[node name="Disconnect" type="Button" parent="."]
+offset_left = 360.0
+offset_top = 189.0
+offset_right = 535.0
+offset_bottom = 258.0
+text = "Disconnect"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_left = 453.0
 offset_top = 79.0
@@ -36,9 +43,10 @@ text = "Connected:"
 
 [node name="Status" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-text = "Waiting"
+text = "Waiting to Connect"
 
-[node name="RmqClientNode" parent="." instance=ExtResource("2_norsa")]
+[node name="RmqClientNode" parent="." instance=ExtResource("2_u2oln")]
 
 [connection signal="pressed" from="Connect" to="." method="_on_connect_pressed"]
 [connection signal="pressed" from="Send" to="." method="_on_send_pressed"]
+[connection signal="pressed" from="Disconnect" to="." method="_on_disconnect_pressed"]

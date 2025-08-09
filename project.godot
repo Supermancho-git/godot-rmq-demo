@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="JavaGodotEnet"
+config/name="GodotRmqDemo"
 run/main_scene="uid://dvkdu8fqs6gwc"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
