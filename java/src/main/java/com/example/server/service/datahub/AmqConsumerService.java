@@ -13,6 +13,7 @@ import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
@@ -20,6 +21,7 @@ import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Log4j2
 @Service
@@ -35,7 +37,6 @@ public class AmqConsumerService extends BaseService {
     @Autowired
     HeartbeatPingHandler heartbeatPingHandler;
 
-    // Dynamic queue names
     @RabbitListener(id = RECEIVED_FROM_CLIENT, autoStartup = "true")
     public void consumeUserMessage(String message, @Header(AmqpHeaders.CONSUMER_QUEUE) String queue) {
         log.info("Heard message: " + message + " from queue: " + queue);
@@ -70,7 +71,7 @@ public class AmqConsumerService extends BaseService {
     }
 
     public void addUserQueueToListener(String listenerId, String queueName) {
-        if (queueName.isEmpty() || listenerId.isEmpty()) {
+        if (!StringUtils.hasText(queueName) || !StringUtils.hasText(listenerId)) {
             log.info("invalid params rejected for adding user queue");
             return;
         }
@@ -85,7 +86,7 @@ public class AmqConsumerService extends BaseService {
     }
 
     public void removeUserQueueFromListener(String listenerId, String queueName) {
-        if (queueName.isEmpty() || listenerId.isEmpty()) {
+        if (!StringUtils.hasText(queueName) || !StringUtils.hasText(listenerId)) {
             log.info("invalid params rejected for adding user queue");
             return;
         }

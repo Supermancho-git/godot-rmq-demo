@@ -76,10 +76,10 @@ anchor_left = 4.75
 anchor_top = -9.975
 anchor_right = 4.75
 anchor_bottom = -9.975
-offset_left = -170.0
-offset_top = 539.0
-offset_right = -20.0
-offset_bottom = 589.0
+offset_left = 20.0
+offset_top = 140.0
+offset_right = 170.0
+offset_bottom = 190.0
 text = "Send Msg"
 metadata/_edit_use_anchors_ = true
 
@@ -119,17 +119,17 @@ metadata/_edit_use_anchors_ = true
 [node name="Back" type="Button" parent="ConnectionController"]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 140.0
+offset_top = 200.0
 offset_right = 170.0
-offset_bottom = 190.0
+offset_bottom = 250.0
 text = "Back to Login"
 
 [node name="Exit" type="Button" parent="ConnectionController"]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 200.0
+offset_top = 260.0
 offset_right = 170.0
-offset_bottom = 250.0
+offset_bottom = 310.0
 text = "Quit"
 
 [connection signal="pressed" from="LoginController/AssertUser" to="." method="_on_assert_user_pressed"]

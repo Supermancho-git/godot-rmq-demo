@@ -12,6 +12,8 @@ extends Node
 @onready var connectionController:Control = $ConnectionController
 @onready var status:Label = $ConnectionController/HBoxContainer/Status
 @onready var end2end:CheckBox = $ConnectionController/End2End
+
+var userRmqCredentials:UserRmqCredentials
 #-----
 func _ready() -> void:
 	rmq.sConnected.connect(_on_server_connection)
@@ -42,17 +44,19 @@ func _on_connect_pressed() -> void: # example data
 		"vhost": "my_vhost",
 		"publishingToExchange": "my.external.topic",
 		"connectTimeoutSec": 2,
-		"username": "uuser_86eee2ad-d367-4e8d-bc2d-cd41c538bd42",
-		"cipher":  "upass_password",
+		"username": userRmqCredentials.messageUsername,
+		"cipher":  userRmqCredentials.messageCipher,
 
-		"publishingToQueueRk": "rk_user_publish_queue_86eee2ad-d367-4e8d-bc2d-cd41c538bd42_-6313342781865142006",
-		"consumingFromQueue": "user.receive.queue.86eee2ad-d367-4e8d-bc2d-cd41c538bd42_-6313342781865142006",
+		"publishingToQueueRk": userRmqCredentials.publishingToQueueRk,
+		"consumingFromQueue": userRmqCredentials.consumingFromQueue,
 
 		"confirmEnd2End": confirmEnd2End,
 	}))
 	if result != OK and result != ERR_ALREADY_IN_USE:
 		Log.warn("RMQ Connection failed", [result])
 		status.text = "Failed"
+	else:
+		status.text = "Connected"
 	return
 #-----
 func _on_server_connection() -> void:
@@ -86,7 +90,7 @@ func _on_assert_user_pressed() -> void:
 		"email": "myemail@nowhere.com",
 		"cipher": "testtest"
 	}
-	httpUserCreate.request(Constants.ServiceUrl.UserCreate, [Constants.contentTypeJson], HTTPClient.METHOD_POST, JSON.stringify(userCreateDto))
+	httpUserCreate.request(ServiceUrl.UserCreate, [contentTypeJson], HTTPClient.METHOD_POST, JSON.stringify(userCreateDto))
 	return
 #-----
 func _on_login_pressed() -> void:
@@ -94,7 +98,7 @@ func _on_login_pressed() -> void:
 		"username": "myname",
 		"cipher": "testtest"
 	}
-	httpUserLogin.request(Constants.ServiceUrl.UserLogin, [Constants.contentTypeJson], HTTPClient.METHOD_POST, JSON.stringify(userLoginDto))
+	httpUserLogin.request(ServiceUrl.UserLogin, [contentTypeJson], HTTPClient.METHOD_POST, JSON.stringify(userLoginDto))
 	return
 #----
 func on_httpUserCreate_completed(_result:int, response_code:int, _headers:PackedStringArray, body:PackedByteArray) -> void:
@@ -113,6 +117,7 @@ func on_httpUserLogin_completed(_result:int, response_code:int, _headers:PackedS
 	if body:
 		json = RMQUtil.parse_json_packedbytearray(body)
 	if (json && response_code == 200 && json.size() > 0):
+		userRmqCredentials = UserRmqCredentials.new(json)
 		loginController.hide()
 		connectionController.show()
 		return
@@ -127,9 +132,30 @@ func _on_back_pressed() -> void:
 func _on_exit_pressed() -> void:
 	get_tree().quit()
 #-----
+#=====
+class ServiceUrl:
+	const UserLogin:String = "http://localhost:8080/server/api/v1/user/login"
+	const UserCreate:String = "http://localhost:8080/server/api/v1/user/create"
+const contentTypeJson:String = "Content-Type: application/json"
+#=====
+class UserRmqCredentials:
+	const _requiredFields:Array[String] = ["id", "username", "messageUsername", "messageCipher", "publishingToQueueRk", "consumingFromQueue"]
+	const _className:String = "UserRmqCredentials"
 
-class Constants:
-	class ServiceUrl:
-		const UserLogin:String = "http://localhost:8080/server/api/v1/user/login"
-		const UserCreate:String = "http://localhost:8080/server/api/v1/user/create"
-	const contentTypeJson:String = "Content-Type: application/json"
+	var id:String
+	var username:String
+	var cipher:String
+	var messageUsername:String
+	var messageCipher:String
+	var publishingToQueueRk:String
+	var consumingFromQueue:String
+
+	var valid:bool = false
+
+	func _init(config:Dictionary) -> void:
+		Util.assertRequiredFields(config, _className, _requiredFields)
+		for field in config:
+			self[field] = config[field]
+		valid = true
+		return
+#=====

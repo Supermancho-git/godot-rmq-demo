@@ -2,6 +2,7 @@ package com.example.server.dao;
 
 import com.example.server.dao.record.UserRecord;
 import com.example.server.model.User;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -23,6 +24,21 @@ public class DbDao {
             .param(id)
             .query(UserRecord.class)
             .optional();
+    }
+
+    /**
+     * Returns all active users with messaging configuration. Used to rebuild listener queue registrations
+     * after application start or RabbitMQ connection recovery.
+     */
+    public List<UserRecord> getAllActiveUsers() {
+        return jdbcClient.sql("SELECT " +
+                "id, username, cipher, email, " +
+                "created_at, modified_at, active, message_username, message_cipher, " +
+                "client_publishing_to_queue, client_publishing_to_queue_rk, " +
+                "client_consuming_from_queue, client_consuming_from_queue_rk " +
+                "FROM example.users WHERE active = true")
+            .query(UserRecord.class)
+            .list();
     }
 
     public Optional<String> findUserById(String id) {
