@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @JsonSerialize
 public class UserCreateResponseDto {
+
     String id;
     String username;
     String email;
@@ -13,4 +14,5 @@ public class UserCreateResponseDto {
 
     long createdAt;
     long modifiedAt;
+
 }

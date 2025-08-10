@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class RabbitMqAdminService extends BaseService {
 
-    // Endpoints
-
     @Value("${rabbitmq.management.user.create}")
     String rabbitMqCreateUserEndpoint;
 

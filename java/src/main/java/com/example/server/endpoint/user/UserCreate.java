@@ -63,4 +63,5 @@ public class UserCreate extends BaseEndpoint {
             HttpStatus.OK
         );
     }
+
 }

@@ -1,9 +1,9 @@
 --
 -- PostgreSQL database dump
 --
-CREATE SCHEMA IF NOT EXISTS my;
+CREATE SCHEMA IF NOT EXISTS example;
 
-DROP TABLE IF EXISTS my.users;
+DROP TABLE IF EXISTS example.users;
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,7 +21,7 @@ SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
-CREATE TABLE IF NOT EXISTS my.users
+CREATE TABLE IF NOT EXISTS example.users
 (
     id character varying COLLATE pg_catalog."default" NOT NULL,
     username character varying COLLATE pg_catalog."default" NOT NULL,
@@ -41,5 +41,5 @@ CREATE TABLE IF NOT EXISTS my.users
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS my.users
+ALTER TABLE IF EXISTS example.users
     OWNER to admin;

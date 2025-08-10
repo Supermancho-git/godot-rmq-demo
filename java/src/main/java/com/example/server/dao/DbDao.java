@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
-// https://www.danvega.dev/blog/spring-jdbc-client
-
 @Service
 public class DbDao {
 

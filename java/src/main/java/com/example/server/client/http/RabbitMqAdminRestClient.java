@@ -44,4 +44,5 @@ public class RabbitMqAdminRestClient extends RestClient {
     public JsonNode post(String uri, String body) {
         return (JsonNode) this.getResponseSync(HttpMethod.POST, uri, null, body, null, JsonNode.class, new ObjectMapper());
     }
+
 }

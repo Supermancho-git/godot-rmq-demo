@@ -2,7 +2,6 @@ package com.example.server.client.http;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +11,6 @@ import java.util.UUID;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,9 +23,6 @@ import org.springframework.web.client.UnknownHttpStatusCodeException;
 
 @Log4j2
 public abstract class RestClient {
-
-    @Autowired
-    MeterRegistry meterRegistry;
 
     RestTemplate restTemplate;
 

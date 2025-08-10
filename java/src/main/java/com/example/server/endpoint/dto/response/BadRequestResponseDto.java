@@ -5,5 +5,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class BadRequestResponseDto {
+
     ArrayList<String> reasons;
+
 }

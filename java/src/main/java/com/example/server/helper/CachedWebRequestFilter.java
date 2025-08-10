@@ -12,6 +12,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 
 @Component
 public class CachedWebRequestFilter extends OncePerRequestFilter {
+
     @Override
     @SuppressWarnings("NullableProblems")
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -19,4 +20,5 @@ public class CachedWebRequestFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper contentCachingRequestWrapper = new ContentCachingRequestWrapper(request);
         filterChain.doFilter(contentCachingRequestWrapper, response);
     }
+
 }

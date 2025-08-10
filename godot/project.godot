@@ -19,6 +19,11 @@ config/icon="res://icon.svg"
 
 Log="*res://global/Log.gd"
 
+[display]
+
+window/size/viewport_width=576
+window/size/viewport_height=324
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

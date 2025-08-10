@@ -1,14 +1,25 @@
 extends Node
 
-@onready var status:Label = $HBoxContainer/Status
-@onready var rmq:Node = $RmqClientNode
-@onready var end2end:CheckBox = $End2End
+@onready var httpUserLogin = $HttpUserLogin
+@onready var httpUserCreate = $HttpUserCreate
 
+@onready var rmq:Node = $RmqClientNode
+
+@onready var loginController:Control = $LoginController
+@onready var assertUserButton:Button = $LoginController/AssertUser
+@onready var loginButton:Button = $LoginController/Login
+
+@onready var connectionController:Control = $ConnectionController
+@onready var status:Label = $ConnectionController/HBoxContainer/Status
+@onready var end2end:CheckBox = $ConnectionController/End2End
 #-----
 func _ready() -> void:
 	rmq.sConnected.connect(_on_server_connection)
 	rmq.sDisconnected.connect(_on_server_disconnected)
 	rmq.sMessage.connect(_on_server_message)
+
+	httpUserLogin.request_completed.connect(on_httpUserLogin_completed)
+	httpUserCreate.request_completed.connect(on_httpUserCreate_completed)
 	return
 #-----
 func _on_connect_pressed() -> void: # example data
@@ -31,11 +42,11 @@ func _on_connect_pressed() -> void: # example data
 		"vhost": "my_vhost",
 		"publishingToExchange": "my.external.topic",
 		"connectTimeoutSec": 2,
-		"username": "uuser_5212f6e1-a239-4d5f-96c7-fa756bfe9236",
+		"username": "uuser_86eee2ad-d367-4e8d-bc2d-cd41c538bd42",
 		"cipher":  "upass_password",
 
-		"publishingToQueueRk": "rk_user_publish_queue_5212f6e1-a239-4d5f-96c7-fa756bfe9236_-774881100357448360",
-		"consumingFromQueue": "user.receive.queue.5212f6e1-a239-4d5f-96c7-fa756bfe9236_-774881100357448360",
+		"publishingToQueueRk": "rk_user_publish_queue_86eee2ad-d367-4e8d-bc2d-cd41c538bd42_-6313342781865142006",
+		"consumingFromQueue": "user.receive.queue.86eee2ad-d367-4e8d-bc2d-cd41c538bd42_-6313342781865142006",
 
 		"confirmEnd2End": confirmEnd2End,
 	}))
@@ -69,3 +80,56 @@ func _on_disconnect_pressed() -> void:
 	rmq.doDisconnect()
 	return
 #-----
+func _on_assert_user_pressed() -> void:
+	var userCreateDto:Dictionary = {
+		"username": "myname",
+		"email": "myemail@nowhere.com",
+		"cipher": "testtest"
+	}
+	httpUserCreate.request(Constants.ServiceUrl.UserCreate, [Constants.contentTypeJson], HTTPClient.METHOD_POST, JSON.stringify(userCreateDto))
+	return
+#-----
+func _on_login_pressed() -> void:
+	var userLoginDto:Dictionary = {
+		"username": "myname",
+		"cipher": "testtest"
+	}
+	httpUserLogin.request(Constants.ServiceUrl.UserLogin, [Constants.contentTypeJson], HTTPClient.METHOD_POST, JSON.stringify(userLoginDto))
+	return
+#----
+func on_httpUserCreate_completed(_result:int, response_code:int, _headers:PackedStringArray, body:PackedByteArray) -> void:
+	var json:Dictionary
+	if body:
+		json = RMQUtil.parse_json_packedbytearray(body)
+	if json and json.size() > 0:
+		if response_code == 200 or (response_code == 400 and json.has("reasons") and json.reasons[0] == "User already exists"):
+			loginButton.disabled = false
+			return
+	Log.error("Assert User failed.")
+	return
+#----
+func on_httpUserLogin_completed(_result:int, response_code:int, _headers:PackedStringArray, body:PackedByteArray) -> void:
+	var json:Dictionary
+	if body:
+		json = RMQUtil.parse_json_packedbytearray(body)
+	if (json && response_code == 200 && json.size() > 0):
+		loginController.hide()
+		connectionController.show()
+		return
+	Log.error("Login failed.")
+	return
+#----
+func _on_back_pressed() -> void:
+	connectionController.hide()
+	loginController.show()
+	return
+#-----
+func _on_exit_pressed() -> void:
+	get_tree().quit()
+#-----
+
+class Constants:
+	class ServiceUrl:
+		const UserLogin:String = "http://localhost:8080/server/api/v1/user/login"
+		const UserCreate:String = "http://localhost:8080/server/api/v1/user/create"
+	const contentTypeJson:String = "Content-Type: application/json"

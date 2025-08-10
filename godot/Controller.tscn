@@ -6,54 +6,136 @@
 [node name="Controller" type="Node"]
 script = ExtResource("1_55pmi")
 
-[node name="background" type="Panel" parent="."]
-offset_right = 1152.0
-offset_bottom = 648.0
+[node name="HttpUserCreate" type="HTTPRequest" parent="."]
 
-[node name="Connect" type="Button" parent="."]
-offset_left = 39.0
-offset_top = 51.0
-offset_right = 183.0
-offset_bottom = 108.0
-text = "Connect"
-
-[node name="Send" type="Button" parent="."]
-offset_left = 88.0
-offset_top = 180.0
-offset_right = 215.0
-offset_bottom = 239.0
-text = "Send Msg"
-
-[node name="Disconnect" type="Button" parent="."]
-offset_left = 360.0
-offset_top = 189.0
-offset_right = 535.0
-offset_bottom = 258.0
-text = "Disconnect"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-offset_left = 453.0
-offset_top = 79.0
-offset_right = 653.0
-offset_bottom = 119.0
-
-[node name="FieldLabel" type="Label" parent="HBoxContainer"]
-layout_mode = 2
-text = "Connected:"
-
-[node name="Status" type="Label" parent="HBoxContainer"]
-layout_mode = 2
-text = "Waiting to Connect"
+[node name="HttpUserLogin" type="HTTPRequest" parent="."]
 
 [node name="RmqClientNode" parent="." instance=ExtResource("2_u2oln")]
 
-[node name="End2End" type="CheckBox" parent="."]
-offset_left = 157.0
-offset_top = 367.0
-offset_right = 181.0
-offset_bottom = 391.0
-text = "Confirm End2End"
+[node name="LoginController" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 
-[connection signal="pressed" from="Connect" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="Send" to="." method="_on_send_pressed"]
-[connection signal="pressed" from="Disconnect" to="." method="_on_disconnect_pressed"]
+[node name="background" type="Panel" parent="LoginController"]
+offset_right = 576.0
+offset_bottom = 324.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="LoginController"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 180.0
+offset_bottom = 314.0
+
+[node name="AssertUser" type="Button" parent="LoginController"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 170.0
+offset_bottom = 70.0
+text = "Ensure User Exists"
+
+[node name="Login" type="Button" parent="LoginController"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = 170.0
+offset_bottom = 130.0
+disabled = true
+text = "Login User"
+
+[node name="ConnectionController" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+
+[node name="background" type="Panel" parent="ConnectionController"]
+offset_right = 576.0
+offset_bottom = 324.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="ConnectionController"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 180.0
+offset_bottom = 314.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Connect" type="Button" parent="ConnectionController"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 170.0
+offset_bottom = 70.0
+text = "Connect"
+metadata/_edit_use_anchors_ = true
+
+[node name="Send" type="Button" parent="ConnectionController"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 4.75
+anchor_top = -9.975
+anchor_right = 4.75
+anchor_bottom = -9.975
+offset_left = -170.0
+offset_top = 539.0
+offset_right = -20.0
+offset_bottom = 589.0
+text = "Send Msg"
+metadata/_edit_use_anchors_ = true
+
+[node name="Disconnect" type="Button" parent="ConnectionController"]
+offset_left = 20.0
+offset_top = 80.0
+offset_right = 170.0
+offset_bottom = 130.0
+text = "Disconnect"
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ConnectionController"]
+layout_mode = 1
+offset_left = 200.0
+offset_top = 280.0
+offset_right = 439.0
+offset_bottom = 303.0
+alignment = 1
+
+[node name="FieldLabel" type="Label" parent="ConnectionController/HBoxContainer"]
+layout_mode = 2
+text = "Connection Status: "
+
+[node name="Status" type="Label" parent="ConnectionController/HBoxContainer"]
+layout_mode = 2
+text = "Waiting to Connect"
+
+[node name="End2End" type="CheckBox" parent="ConnectionController"]
+offset_left = 190.0
+offset_top = 31.0
+offset_right = 493.0
+offset_bottom = 62.0
+button_pressed = true
+text = "Confirm End2End When Connecting"
+metadata/_edit_use_anchors_ = true
+
+[node name="Back" type="Button" parent="ConnectionController"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 140.0
+offset_right = 170.0
+offset_bottom = 190.0
+text = "Back to Login"
+
+[node name="Exit" type="Button" parent="ConnectionController"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 200.0
+offset_right = 170.0
+offset_bottom = 250.0
+text = "Quit"
+
+[connection signal="pressed" from="LoginController/AssertUser" to="." method="_on_assert_user_pressed"]
+[connection signal="pressed" from="LoginController/Login" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="ConnectionController/Connect" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="ConnectionController/Send" to="." method="_on_send_pressed"]
+[connection signal="pressed" from="ConnectionController/Disconnect" to="." method="_on_disconnect_pressed"]
+[connection signal="pressed" from="ConnectionController/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ConnectionController/Exit" to="." method="_on_exit_pressed"]

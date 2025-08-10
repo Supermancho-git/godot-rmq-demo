@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class UserLoginRequestDto {
+
     @Size(min = 5, max = 50, message = "requires username to be 5-50 characters")
     @Pattern(regexp = "^[A-Za-z0-9_\\-=|]*$")
     String username;
@@ -13,4 +14,5 @@ public class UserLoginRequestDto {
     @Size(min = 5, max = 20, message = "requires password to be 5-20 characters")
     @Pattern(regexp = "^[A-Za-z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"|,.<>/?]*$")
     String cipher;
+
 }

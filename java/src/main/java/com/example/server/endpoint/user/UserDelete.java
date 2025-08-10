@@ -59,4 +59,5 @@ public class UserDelete extends BaseEndpoint {
             HttpStatus.OK
         );
     }
+
 }

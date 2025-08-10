@@ -5,7 +5,7 @@ import static com.example.server.helper.Constants.MTYPE;
 import static com.example.server.helper.Constants.RECEIVED_FROM_CLIENT;
 
 import com.example.server.dao.DbDao;
-import com.example.server.model.User;
+import com.example.server.dao.record.UserRecord;
 import com.example.server.service.BaseService;
 import com.example.server.service.datahub.consumer.HeartbeatPingHandler;
 import com.google.gson.Gson;
@@ -28,6 +28,8 @@ public class AmqConsumerService extends BaseService {
     @Autowired
     DbDao dbDao;
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
     RabbitListenerEndpointRegistry registry;
 
     @Autowired
@@ -47,13 +49,13 @@ public class AmqConsumerService extends BaseService {
             return;
         }
 
-        User userData = getUserData(userId);
+        UserRecord userData = getUserData(userId);
         if (userData == null) {
             log.error(String.format("Received message from a user that was not found. UserId: %s", userId));
             return;
         }
 
-        String clientConsumingFromQueueRk = userData.getClientConsumingFromQueueRk();
+        String clientConsumingFromQueueRk = userData.client_consuming_from_queue_rk();
 
         String mtype = jsonObject.getString(MTYPE);
         log.info("AMQ Consumer Heard Mtype: " + mtype + " from " + queue, message);
@@ -148,15 +150,9 @@ public class AmqConsumerService extends BaseService {
         return dotParts[dotParts.length - 1];
     }
 
-    User getUserData(String userId) {
-        String value;
-        Optional<String> dbValue = dbDao.findUserById(userId);
-        if (dbValue.isPresent()) {
-            value = dbValue.get();
-        } else {
-            return null;
-        }
-        return gson.fromJson(value, User.class);
+    UserRecord getUserData(String userId) {
+        Optional<UserRecord> dbValue = dbDao.getUserById(userId);
+        return dbValue.orElse(null);
     }
 
 }

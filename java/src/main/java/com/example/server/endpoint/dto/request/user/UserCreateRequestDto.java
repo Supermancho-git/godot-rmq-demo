@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class UserCreateRequestDto {
+
     @Size(min = 5, max = 50, message = "requires username to be 5-50 characters")
     String username;
 
@@ -14,4 +15,5 @@ public class UserCreateRequestDto {
 
     @Size(min = 5, max = 20, message = "requires password to be 5-20 characters")
     String cipher;
+
 }

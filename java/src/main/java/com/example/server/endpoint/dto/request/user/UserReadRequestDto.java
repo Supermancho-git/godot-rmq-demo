@@ -5,6 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class UserReadRequestDto {
+
     @NotBlank
     String id;
+
 }

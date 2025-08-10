@@ -6,7 +6,6 @@ import com.example.server.endpoint.dto.request.user.UserCreateRequestDto;
 import com.example.server.endpoint.dto.request.user.UserDeleteRequestDto;
 import com.example.server.endpoint.dto.request.user.UserLoginRequestDto;
 import com.example.server.endpoint.dto.request.user.UserReadRequestDto;
-import com.example.server.endpoint.dto.request.user.UserUpdateRequestDto;
 import com.example.server.helper.ValidationVariant;
 import com.example.server.model.User;
 import com.example.server.service.BaseService;
@@ -54,29 +53,6 @@ public class UserValidationService extends BaseService {
         }
 
         Optional<UserRecord> maybeUserRecord = dbDao.getUserById(userDeleteRequestDto.getId());
-        if (maybeUserRecord.isEmpty()) {
-            violationMessages.add("User does not exist.");
-            variant.setViolationMessages(violationMessages);
-            return variant;
-        }
-
-        User user = new User(maybeUserRecord.get());
-        variant.setUser(user);
-        variant.setViolationMessages(violationMessages);
-        return variant;
-    }
-
-    public ValidationVariant validateUpdateUser(UserUpdateRequestDto userUpdateRequestDto) {
-        ValidationVariant variant = new ValidationVariant();
-        ArrayList<String> violationMessages = new ArrayList<>();
-        Set<ConstraintViolation<UserUpdateRequestDto>> violations = validator.validate(userUpdateRequestDto);
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<UserUpdateRequestDto> violation : violations) {
-                violationMessages.add(violation.getMessage());
-            }
-        }
-
-        Optional<UserRecord> maybeUserRecord = dbDao.getUserById(userUpdateRequestDto.getId());
         if (maybeUserRecord.isEmpty()) {
             violationMessages.add("User does not exist.");
             variant.setViolationMessages(violationMessages);

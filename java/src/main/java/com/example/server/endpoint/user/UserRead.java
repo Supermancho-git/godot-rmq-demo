@@ -51,4 +51,5 @@ public class UserRead extends BaseEndpoint {
             HttpStatus.OK
         );
     }
+
 }

@@ -6,7 +6,6 @@ import com.example.server.dao.DbDao;
 import com.example.server.dao.record.UserRecord;
 import com.example.server.endpoint.dto.request.user.UserCreateRequestDto;
 import com.example.server.endpoint.dto.request.user.UserLoginRequestDto;
-import com.example.server.endpoint.dto.request.user.UserUpdateRequestDto;
 import com.example.server.endpoint.dto.response.user.UserLoginResponseDto;
 import com.example.server.model.User;
 import com.example.server.service.BaseService;
@@ -105,32 +104,6 @@ public class UserService extends BaseService {
     public int deleteUser(User user) {
         amqConsumerService.removeUserQueueFromListener(RECEIVED_FROM_CLIENT, user.getClientPublishingToQueue());
         return dbDao.deleteUser(user.getId());
-    }
-
-    public User updateUser(UserUpdateRequestDto userUpdateRequestDto) {
-        Optional<UserRecord> maybeUserRecord = dbDao.getUserById(userUpdateRequestDto.getId());
-        if (maybeUserRecord.isEmpty()) {
-            return null;
-        }
-
-        UserRecord userRecord = maybeUserRecord.get();
-        UserRecord updatedUserRecord = new UserRecord(
-            userRecord.id(),
-            userUpdateRequestDto.getUsername().orElse(userRecord.username()),
-            userRecord.cipher(),
-            userUpdateRequestDto.getEmail().orElse(userRecord.email()),
-            userRecord.created_at(),
-            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
-            userRecord.active(),
-            userRecord.message_username(),
-            userRecord.message_cipher(),
-            userRecord.client_publishing_to_queue(),
-            userRecord.client_publishing_to_queue_rk(),
-            userRecord.client_consuming_from_queue(),
-            userRecord.client_consuming_from_queue_rk()
-        );
-        dbDao.updateUserByRecord(updatedUserRecord);
-        return new User(updatedUserRecord);
     }
 
     public User updateUser(User user) {
