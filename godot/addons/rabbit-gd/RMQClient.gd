@@ -13,6 +13,7 @@ var _next_channel_num: int = 1
 var _frame_max : int
 var _channel_max : int
 var _reason:String
+var _disconnected:bool = true
 
 # tick the client to have it collect inbound data from the tcp connection, and send outbound data.
 func tick():
@@ -61,6 +62,7 @@ func open(
 	if handshake_err != OK:
 		return handshake_err
 	#Log.debug("[rabbitmq] Connected to " + host + ":" + str(port))
+	_disconnected = false
 	return OK
 
 func open_tls(
@@ -129,7 +131,7 @@ func _start_receiving():
 		_connection.poll()
 		if _connection.get_status() != 2: # 2 means CONNECTED in both StreamPeerTLS and StreamPeerTCP
 			Log.debug("[rabbitmq] client receiver disconnected, got status " + str(_connection.get_status()))
-			_reason = ""
+			_close_connection("connection status not connected")
 			return
 		var available_bytes = _connection.get_available_bytes()
 		while available_bytes > 0:
@@ -137,7 +139,7 @@ func _start_receiving():
 			var error = pdata[0]
 			if error != OK:
 				Log.error("[rabbitmq] error ticking: " + str(error))
-				close()
+				close("error with tick")
 				return
 			var data : PackedByteArray = pdata[1]
 			_on_inbound_data.emit(data)
@@ -217,6 +219,8 @@ func _handshake(username:String,password:String,virtual_host:String) -> Error:
 		func(err): Log.error("[rabbitmq] error reading tune frame: " + str(err))
 	)
 	var connection_tune_method := await RMQConnectionClass.Tune.from_frame(connection_tune_frame_parse_result.data)
+	if connection_tune_method == null:
+		return FAILED
 	_frame_max = connection_tune_method.frame_max
 	_channel_max = connection_tune_method.channel_max
 
@@ -284,7 +288,7 @@ func _heartbeat() -> void:
 # close connection gracefully from our end.
 # internal function for sending a close confirmation to upstream.
 # disconnects the tcp peer and closes all active channels.
-func close(reason:String = "") -> Error:
+func close(reason:String) -> Error:
 	if _connection:
 		for channel in _active_channels.values():
 			await channel.close()
@@ -292,7 +296,8 @@ func close(reason:String = "") -> Error:
 		var close_error := await _send(RMQConnectionClass.Close.new(200,"",0,0).to_frame().to_wire())
 		if close_error != OK:
 			Log.warn("[rabbitmq] Closing error, closing rmq connection: " + str(close_error))
-			_close_connection(reason)
+			if not _disconnected:
+				_close_connection(reason)
 			return close_error
 		var connection_closeok_frame_parse_result := await RMQFrame.forward(
 			PackedByteArray(),
@@ -323,5 +328,6 @@ func _close_connection(reason:String) -> void:
 	elif _connection is StreamPeerTLS:
 		_connection.disconnect_from_stream()
 	Log.debug("[rabbitmq] Closed gracefully")
+	_disconnected = true
 	sClientDisconnected.emit(reason)
 	return

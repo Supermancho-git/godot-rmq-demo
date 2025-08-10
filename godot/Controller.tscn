@@ -52,7 +52,6 @@ offset_left = 157.0
 offset_top = 367.0
 offset_right = 181.0
 offset_bottom = 391.0
-button_pressed = true
 text = "Confirm End2End"
 
 [connection signal="pressed" from="Connect" to="." method="_on_connect_pressed"]

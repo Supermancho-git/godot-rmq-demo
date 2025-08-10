@@ -15,9 +15,9 @@ func _on_connect_pressed() -> void: # example data
 	Log.info("clicked")
 	status.text = "Waiting to Connect"
 
-	var confirmEnd2End:RMQEnd2EndSettings = null
+	var confirmEnd2End:RMQClientConfig.RMQEnd2EndSettings = null
 	if end2end.button_pressed:
-		confirmEnd2End = RMQEnd2EndSettings.new({
+		confirmEnd2End = RMQClientConfig.RMQEnd2EndSettings.new({
 			"timeoutSec": 2,
 			"pingJson": {"mtype": "ping"},
 			"pongJson": {"mtype": "pong"},
@@ -25,11 +25,11 @@ func _on_connect_pressed() -> void: # example data
 
 	# There's an assumption that you have allocated a VHOST and PUBLISH exhange that applies a filter by permissions and regex
 	# That's where the publishingToQueueRk comes in, to route to the server queue, as RMQ has validated the transport
-	var result:Error = await rmq.doConnect(RMQValidatedConfig.new({
+	var result:Error = await rmq.doConnect(RMQClientConfig.new({
 		"host": "localhost",
 		"port": 5672,
-		"vhost": "ccc_vhost",
-		"publishingToExchange": "ccc.external.topic",
+		"vhost": "my_vhost",
+		"publishingToExchange": "my.external.topic",
 		"connectTimeoutSec": 2,
 		"username": "uuser_5212f6e1-a239-4d5f-96c7-fa756bfe9236",
 		"cipher":  "upass_password",

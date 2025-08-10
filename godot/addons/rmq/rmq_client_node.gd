@@ -24,7 +24,7 @@ var publishingToQueueRk:String
 var host:String
 var port:int
 var connectTimeoutSec:int
-var confirmEnd2End:RMQEnd2EndSettings
+var confirmEnd2End:RMQClientConfig.RMQEnd2EndSettings
 var useConfirmEnd2End:bool
 
 var incomingMessageBuffer:Array = []
@@ -41,7 +41,7 @@ func _process(_delta:float) -> void:
 	return
 #----
 #  Configure AND Start convenience
-func doConnect(rmqConfig:RMQValidatedConfig) -> Error:
+func doConnect(rmqConfig:RMQClientConfig) -> Error:
 	var err:Error = configure(rmqConfig)
 	if err != OK:
 		return err
@@ -61,7 +61,7 @@ func doDisconnect(reason:String = "application disconnected") -> void:
 	_client.close(reason)
 	return
 #-----
-func configure(rmqConfig:RMQValidatedConfig) -> Error:
+func configure(rmqConfig:RMQClientConfig) -> Error:
 	if _client != null:
 		Log.warn("configured client in use")
 		return ERR_ALREADY_IN_USE
@@ -191,7 +191,7 @@ func _on_client_disconnected(reason:String) -> void:
 	_timeoutTimer.stop()
 	if _client:
 		_client.sClientDisconnected.disconnect(_on_client_disconnected)
-		_client.close()
+		_client.close(reason)
 	_client = null
 	sDisconnected.emit(reason)
 	return
