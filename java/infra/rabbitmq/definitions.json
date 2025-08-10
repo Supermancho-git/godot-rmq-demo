@@ -4,8 +4,8 @@
   "product_name": "RabbitMQ",
   "product_version": "4.1.3",
   "rabbitmq_definition_format": "cluster",
-  "original_cluster_name": "rabbit@c6cd90f1b316",
-  "explanation": "Definitions of cluster 'rabbit@c6cd90f1b316'",
+  "original_cluster_name": "rabbit@b68f217a0be2",
+  "explanation": "Definitions of cluster 'rabbit@b68f217a0be2'",
   "users": [
     {
       "name": "admin",
@@ -18,14 +18,7 @@
     },
     {
       "name": "my_server_50ab",
-      "password_hash": "JYklKzba21fK4YAKEscriYDfoFVzGlND901aXiY3bNfbYAUu",
-      "hashing_algorithm": "rabbit_password_hashing_sha256",
-      "tags": [],
-      "limits": {}
-    },
-    {
-      "name": "my_tester_50ab",
-      "password_hash": "C+98mAoRxVyLtZCPlLNDL3MDfEI+VKVwnrmz1uLflhrNMAew",
+      "password_hash": "BR1hZlImMg5NvF0MBqadD9CHuictXd2vENzgS225EPKT4asN",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": [],
       "limits": {}
@@ -54,13 +47,6 @@
     }
   ],
   "permissions": [
-    {
-      "user": "my_tester_50ab",
-      "vhost": "my_vhost",
-      "configure": "",
-      "write": ".*",
-      "read": ".*"
-    },
     {
       "user": "admin",
       "vhost": "my_vhost",
