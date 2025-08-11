@@ -31,7 +31,7 @@ func _on_connect_pressed() -> void: # example data
 	var confirmEnd2End:RMQClientConfig.RMQEnd2EndSettings = null
 	if end2end.button_pressed:
 		confirmEnd2End = RMQClientConfig.RMQEnd2EndSettings.new({
-			"timeoutSec": 2,
+			"timeoutSec": 1,
 			"pingJson": {"mtype": "ping"},
 			"pongJson": {"mtype": "pong"},
 		})
@@ -43,7 +43,7 @@ func _on_connect_pressed() -> void: # example data
 		"port": 5672,
 		"vhost": "my_vhost",
 		"publishingToExchange": "my.external.topic",
-		"connectTimeoutSec": 2,
+		"connectTimeoutSec": 1,
 		"username": userRmqCredentials.messageUsername,
 		"cipher":  userRmqCredentials.messageCipher,
 

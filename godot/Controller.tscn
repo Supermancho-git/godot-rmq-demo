@@ -7,8 +7,10 @@
 script = ExtResource("1_55pmi")
 
 [node name="HttpUserCreate" type="HTTPRequest" parent="."]
+timeout = 1.0
 
 [node name="HttpUserLogin" type="HTTPRequest" parent="."]
+timeout = 1.0
 
 [node name="RmqClientNode" parent="." instance=ExtResource("2_u2oln")]
 
@@ -17,11 +19,13 @@ layout_mode = 3
 anchors_preset = 0
 
 [node name="background" type="Panel" parent="LoginController"]
+layout_mode = 0
 offset_right = 576.0
 offset_bottom = 324.0
 metadata/_edit_use_anchors_ = true
 
 [node name="Panel" type="Panel" parent="LoginController"]
+layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 180.0
@@ -50,11 +54,13 @@ layout_mode = 3
 anchors_preset = 0
 
 [node name="background" type="Panel" parent="ConnectionController"]
+layout_mode = 0
 offset_right = 576.0
 offset_bottom = 324.0
 metadata/_edit_use_anchors_ = true
 
 [node name="Panel" type="Panel" parent="ConnectionController"]
+layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 180.0
@@ -62,6 +68,7 @@ offset_bottom = 314.0
 metadata/_edit_use_anchors_ = true
 
 [node name="Connect" type="Button" parent="ConnectionController"]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 170.0
@@ -84,6 +91,7 @@ text = "Send Msg"
 metadata/_edit_use_anchors_ = true
 
 [node name="Disconnect" type="Button" parent="ConnectionController"]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 80.0
 offset_right = 170.0
@@ -108,6 +116,7 @@ layout_mode = 2
 text = "Waiting to Connect"
 
 [node name="End2End" type="CheckBox" parent="ConnectionController"]
+layout_mode = 0
 offset_left = 190.0
 offset_top = 31.0
 offset_right = 493.0
