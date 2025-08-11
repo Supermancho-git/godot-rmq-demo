@@ -47,6 +47,20 @@ Note: the .run configurations should be available as runtime configurations
 
 After startup is complete, the application should be running and connected to the docker DB and RabbitMQ.
 
+6. Open the Godot GodotRmqDemo project.
+7. Run the Godot GodotRmqDemo project.
+8. Checkbox should be enabled. Click connect.
+
+
+    [controller:48]: Client CONNECTED
+
+Note: When sending a message, if it reached the server, it will reply. GodotRmqDemo will log:
+
+    [controller:58]: sMessage received with payload: { "mtype": "pong" }
+
+9. Click disconnect.
+
+
 -----
 
 Creating a user that will work, end to end, is a process.
@@ -60,7 +74,7 @@ The first step is a simple Create User in the Database, which also creates a use
         "cipher": "testtest"
     }
 
-The second step attaches the server to the RabbitMQ user-queue, via an RMQ registry. 
+The second step attaches the server to the RabbitMQ user-queue, via an RMQ registry.
 Without this, the server will not hear new messages on a queue.
 
     POST localhost:8080/server/api/v1/user/login
@@ -75,19 +89,6 @@ A login is again required to start listening again.
 There are some extra APIs on the server for convenience.
 
 -----
-
-6. Open the Godot GodotRmqDemo project.
-7. Run the Godot GodotRmqDemo project.
-8. Checkbox should be enabled. Click connect.
-
-
-    [controller:48]: Client CONNECTED
-
-Note: When sending a message, if it reached the server, it will reply. GodotRmqDemo will log:
-
-    [controller:58]: sMessage received with payload: { "mtype": "pong" }
-
-9. Click disconnect.
 
 Note: If you want to make this better, on the Java side, on the Godot side, submit an issue to discuss or better, make a PR.
 
