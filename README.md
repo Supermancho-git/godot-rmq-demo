@@ -83,9 +83,6 @@ Without this, the server will not hear new messages on a queue.
         "cipher": "testtest"
     }
 
-Because the RMQ registry is in-memory, a reboot of the server loses this registry.
-A login is again required to start listening again.
-
 There are some extra APIs on the server for convenience.
 
 -----
