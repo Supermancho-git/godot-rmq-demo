@@ -1,0 +1,153 @@
+{
+  "rabbit_version": "4.1.3",
+  "rabbitmq_version": "4.1.3",
+  "product_name": "RabbitMQ",
+  "product_version": "4.1.3",
+  "rabbitmq_definition_format": "cluster",
+  "original_cluster_name": "rabbit@b68f217a0be2",
+  "explanation": "Definitions of cluster 'rabbit@b68f217a0be2'",
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "oZRDSIxdA+hGR++1N75wR57DjYHCi4y53v5lMqQPQIxgFyzL",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    },
+    {
+      "name": "my_server_50ab",
+      "password_hash": "BR1hZlImMg5NvF0MBqadD9CHuictXd2vENzgS225EPKT4asN",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "my_vhost",
+      "description": "My Virtual Host",
+      "metadata": {
+        "description": "My Virtual Host",
+        "tags": [],
+        "default_queue_type": "classic"
+      },
+      "tags": []
+    },
+    {
+      "name": "/",
+      "description": "Default virtual host",
+      "metadata": {
+        "description": "Default virtual host",
+        "tags": [],
+        "default_queue_type": "classic"
+      },
+      "tags": []
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "my_vhost",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "my_server_50ab",
+      "vhost": "my_vhost",
+      "configure": "",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "cluster_tags",
+      "value": []
+    },
+    {
+      "name": "internal_cluster_id",
+      "value": "rabbitmq-cluster-id-3rFS28ETHeOtiUFoDUigMA"
+    }
+  ],
+  "policies": [
+    {
+      "vhost": "my_vhost",
+      "name": "default",
+      "pattern": "^(?!amq\\.).+",
+      "apply-to": "queues",
+      "definition": {
+        "expires": 2419200000,
+        "queue-mode": "lazy",
+        "queue-version": 2
+      },
+      "priority": -10
+    },
+    {
+      "vhost": "my_vhost",
+      "name": "stream-limits",
+      "pattern": ".*",
+      "apply-to": "queues",
+      "definition": {
+        "max-age": "1h",
+        "max-length-bytes": 15000000,
+        "stream-max-segment-size-bytes": 5000000
+      },
+      "priority": -8
+    },
+    {
+      "vhost": "my_vhost",
+      "name": "queue-limits",
+      "pattern": ".*",
+      "apply-to": "queues",
+      "definition": {
+        "max-length": 500,
+        "message-ttl": 120000
+      },
+      "priority": -7
+    }
+  ],
+  "queues": [
+    {
+      "name": "publish.server",
+      "vhost": "my_vhost",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "my.external.topic",
+      "vhost": "my_vhost",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "my.internal.topic",
+      "vhost": "my_vhost",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": []
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration state="INFO" monitorInterval="30">
+    <Properties>
+        <!--hostName is pre-populated by log4j2-->
+        <Property name="HostName">${hostName}</Property>
+        <Property name="APP_NAME">my_server</Property>
+        <Property name="LOGGING_SOURCE_APPLICATION">APP</Property>
+        <Property name="LOGGING_SOURCE_PERFORMANCE">PERF</Property>
+        <Property name="LOG_PATTERN_TEXT">[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %X{x-request-id} %X{x-client-id}
+            %X{isRequestFromBot} %c - %msg%n
+        </Property>
+        <Property name="LOG_PATTERN_JSON_FULL">
+            {"timestamp":"%d{ISO8601}","level":"%level","app":"my_server","logger":"%c","x-request-id":"%mdc{x-request-id}","x-client-id":"%mdc{x-client-id}","isRequestFromBot":"%mdc{isRequestFromBot}","threadName":"%tn","threadId":"%tid","message":"%enc{%message}{JSON}","stackTrace":"%enc{%exception}{JSON}"}%n
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="Application-Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1}}{bright,yellow}: %msg%n%throwable"/>
+        </Console>
+        <RollingFile name="Application-RollingFile"
+                     filePattern="./logs/dev.%d{MMMM-dd-yyyy}-%i.log">
+            <PatternLayout>
+                <pattern>%d %p %C{1} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Application-Console"/>
+            <AppenderRef ref="Application-RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
