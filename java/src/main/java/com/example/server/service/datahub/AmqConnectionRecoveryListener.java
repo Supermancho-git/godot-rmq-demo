@@ -74,7 +74,6 @@ public class AmqConnectionRecoveryListener implements ConnectionListener, Applic
                 if (queue != null && !queue.isBlank()) {
                     try {
                         amqConsumerService.addUserQueueToListener(RECEIVED_FROM_CLIENT, queue);
-                        internalExchangeRabbitTemplate.send(user.client_publishing_to_queue_rk(), new Message("{\"mtype\": \"pong\"}".getBytes(StandardCharsets.UTF_8)));
                     } catch (Exception e) {
                         log.warn("Failed to add queue '{}' to listener '{}': {}", queue, RECEIVED_FROM_CLIENT, e.getMessage());
                     }
